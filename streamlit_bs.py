@@ -36,7 +36,7 @@ if submitted:
 
         data = {
             "Metric": ["Black-Scholes Price", "Delta", "Gamma", "Vega", "Theta", "Rho", "Implied Vol"],
-            "Value": [f"${bs_price:.2f}", f"{delta:.4f}", f"{gamma:.4f}", f"{vega:.4f}", f"{theta:.4f}", f"{rho:.4f}", f"{implied_vol*100:.2f}%"]
+            "Value": [f"${bs_price:.2f}", f"{delta:.4f}", f"{gamma:.4f}", f"{vega / 100:.4f}", f"{theta:.4f}", f"{rho / 100:.4f}", f"{implied_vol*100:.2f}%"]
         }
 
         df = pd.DataFrame(data)
