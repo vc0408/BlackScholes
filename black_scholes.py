@@ -6,8 +6,6 @@ import scipy.stats as sp
 import yfinance as yf
 import streamlit as st
 
-
-
 def get_sigma(symbol): 
     ticker = yf.Ticker(symbol)
     todays_data = ticker.history(period='1d')
