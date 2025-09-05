@@ -68,6 +68,47 @@ if submitted:
         plt.ylabel("Frequency")
         st.pyplot(plt)
 
+    
+        ## Volatility Smile
+
+        st.subheader("Volatility Smile")
+
+        iv_func = bs.getImpliedVolCall if callput == "Call" else bs.getImpliedVolPut
+
+        baseline_value = strike_price
+        step_pct = 0.04
+        num_steps = 5
+
+        start = baseline_value * (1 - step_pct * num_steps)
+        end   = baseline_value * (1 + step_pct * num_steps)
+
+        x = np.linspace(start, end, 1000)
+
+        def safe_iv(K):
+            try:
+                v = iv_func(bs_price, stock_price, float(K), conv_interest, time_exp)
+
+                return np.nan if v is None or (isinstance(v, (float, int)) and not np.isfinite(v)) else v
+            except Exception:
+                return np.nan
+
+        y = np.array([safe_iv(k) for k in x])
+
+        step_points = np.array([baseline_value * (1 + step_pct * k) for k in range(-num_steps, num_steps + 1)])
+        step_values = np.array([safe_iv(k) for k in step_points])
+
+        fig, ax = plt.subplots(figsize=(8, 5))
+        ax.plot(x, y, label="Implied Volatility (smile)")
+        ax.scatter(step_points, step_values, s=35, label="4% step strikes")
+        ax.axvline(baseline_value, linestyle="--", label="Baseline strike")
+        ax.set_title(f"IV vs Strike around {baseline_value} (±{num_steps}×{int(step_pct*100)}%)")
+        ax.set_xlabel("Strike (K)")
+        ax.set_ylabel("Implied Volatility")
+        ax.legend()
+        ax.grid(True)
+
+        st.pyplot(fig)
+
     except Exception as e:
         st.error(f"Error calculating option: {e}")
 
